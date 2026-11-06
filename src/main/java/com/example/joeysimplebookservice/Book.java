@@ -1,18 +1,38 @@
 package com.example.joeysimplebookservice;
 
+import jakarta.persistence.*;
+
+import java.math.BigDecimal;
+
+@Entity
+@Table(name = "books")
 public class Book {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+
+    private Long id;
+
+    @Column(nullable = false, length = 200)
     private String title;
+
+    @Column(nullable = false, length = 150)
     private String author;
-    private double price;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
+
+    @Column(name = "image_url", length = 1000)
+    private String imageUrl;
+
     private String genre;
 
     public Book() {
 
     }
 
-    public Book(int id, String title, String author, double price, String genre) {
+    public Book(Long id, String title, String author, BigDecimal price, String genre) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -20,11 +40,11 @@ public class Book {
         this.genre = genre;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -44,11 +64,11 @@ public class Book {
         this.author = author;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -58,5 +78,13 @@ public class Book {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.joeysimplebookservice;
 
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,84 +10,61 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/books")
+@CrossOrigin(origins = "http://localhost:5173")
 public class BookController {
 
-    private final List<Book> books = new ArrayList<>();
-    private int nextId = 4;
+    private final BookRepository bookRepository;
 
-    public BookController() {
-        books.add(new Book(
-                1,
-                "The Hobbit",
-                "J.R.R Tolkien",
-                14.99,
-                "Fantasy"
-        ));
-
-        books.add(new Book(
-                2,
-                "Dune",
-                "Frank Herbert",
-                16.99,
-                "Science Fiction"
-        ));
-
-        books.add(new Book(
-                3,
-                "1984",
-                "George Orwell",
-                12.99,
-                "Dystopia"
-        ));
+    public BookController(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     @GetMapping
     public ResponseEntity<List<Book>> getBooks() {
-        return ResponseEntity.ok(books);
+        return ResponseEntity.ok(bookRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBook(@PathVariable int id) {
-        for (Book book : books) {
-            if (book.getId() == id) {
-                return ResponseEntity.ok(book);
-            }
+    public ResponseEntity<Book> getBook(@PathVariable Long id) {
+        return bookRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
         }
 
-        return ResponseEntity.notFound().build();
-    }
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
-        book.setId(nextId++);
-        books.add(book);
-        return ResponseEntity.status(201).body(book);
+        book.setId(null);
+
+        Book savedBook = bookRepository.save(book);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedBook);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable int id) {
-        for (Book book : books) {
-            if (book.getId() == id) {
-                books.remove(book);
-                return ResponseEntity.status(204).build();
-            }
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        if (!bookRepository.existsById((id))) {
+            return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.notFound().build();
+        bookRepository.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping ("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable int id, @RequestBody Book updateBook) {
-        for (Book book : books) {
-            if (book.getId() == id) {
-                book.setTitle(updateBook.getTitle());
-                book.setAuthor(updateBook.getAuthor());
-                book.setPrice(updateBook.getPrice());
-                book.setGenre(updateBook.getGenre());
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
+        return bookRepository.findById(id)
+                .map(existingBook -> {
+                    existingBook.setTitle(updatedBook.getTitle());
+                    existingBook.setAuthor(updatedBook.getAuthor());
+                    existingBook.setPrice(updatedBook.getPrice());
 
-                return ResponseEntity.ok(book);
-            }
-        }
+                    Book savedBook = bookRepository.save(existingBook);
 
-        return ResponseEntity.notFound().build();
+                    return ResponseEntity.ok(savedBook);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
