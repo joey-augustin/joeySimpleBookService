@@ -12,7 +12,7 @@ jobs:
 
     services:
       mysql:
-        image:mysql:8.4
+        image: mysql:8.4
         env:
           MYSQL_DATABASE: bookstore
           MYSQL_USER: bookstore_app
@@ -41,6 +41,9 @@ jobs:
 
       - name: Grant permission to Gradle Wrapper
         run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test
                                                                  
-      - name: Build and test application
-        run: ./gradlew build
+      - name: Build application
+        run: ./gradlew build -x test
