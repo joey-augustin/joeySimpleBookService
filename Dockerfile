@@ -1,5 +1,5 @@
 
-FROM amazoncorretto:21-al2023-jdk AS builder
+FROM amazoncorretto:17-al2023-jdk AS builder
 WORKDIR /workspace/app
 RUN dnf install -y findutils && dnf clean all
  
@@ -16,7 +16,7 @@ RUN ./gradlew bootJar -x test --no-daemon
  
 RUN java -Djarmode=layertools -jar build/libs/*.jar extract --destination build/extracted
  
-FROM amazoncorretto:21-al2023-headless AS runner
+FROM amazoncorretto:17-al2023-headless AS runner
 WORKDIR /app
  
 USER 1001:1001
