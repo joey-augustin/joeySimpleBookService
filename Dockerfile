@@ -18,8 +18,7 @@ RUN java -Djarmode=layertools -jar build/libs/*.jar extract --destination build/
 FROM amazoncorretto:21-al2023-headless AS runner
 WORKDIR /app
  
-RUN microdnf install -y shadow-utils && microdnf clean all && groupadd --system spring && useradd --system --gid spring spring
-USER spring:spring
+USER 1001:1001
  
  
 COPY --from=builder /workspace/app/build/extracted/dependencies/ ./
