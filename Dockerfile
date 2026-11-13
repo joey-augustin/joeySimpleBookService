@@ -1,6 +1,7 @@
 
 FROM amazoncorretto:21-al2023-jdk AS builder
 WORKDIR /workspace/app
+RUN dnf install -y findutils && dnf clean all
  
 COPY gradle/ gradle/
 COPY gradlew build.gradle settings.gradle ./
