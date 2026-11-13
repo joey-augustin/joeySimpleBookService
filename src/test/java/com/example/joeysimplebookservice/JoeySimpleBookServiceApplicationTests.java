@@ -7,6 +7,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -14,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class JoeySimpleBookServiceApplicationTests {
 
     @Autowired
-    private MockMvc MockMvc;
+    private MockMvc mockMvc;
 
     @Test
     void contextLoads() {
